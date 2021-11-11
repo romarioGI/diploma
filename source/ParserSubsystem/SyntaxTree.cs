@@ -19,7 +19,7 @@ namespace ParserSubsystem
             return _operands[index];
         }
 
-        protected SyntaxTree([NotNull] Token token, [NotNull] SyntaxTree[] operands)
+        internal SyntaxTree([NotNull] Token token, [NotNull] SyntaxTree[] operands)
         {
             Token = token ?? throw new ArgumentNullException(nameof(token));
             if (operands is null || operands.Any(x => x is null))
@@ -27,7 +27,7 @@ namespace ParserSubsystem
             _operands = operands;
         }
 
-        protected SyntaxTree([NotNull] Token token, [NotNull] IEnumerable<SyntaxTree> operands) : this(token,
+        internal SyntaxTree([NotNull] Token token, [NotNull] IEnumerable<SyntaxTree> operands) : this(token,
             operands.ToArray())
         {
         }
