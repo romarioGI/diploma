@@ -6,7 +6,7 @@ using System.IO;
 
 namespace InputSubsystem
 {
-    public class TextReaderInput : IInput<Symbol>
+    public class TextReaderInput : IInput<Symbol>, IDisposable
     {
         private readonly TextReader _textReader;
 
@@ -25,6 +25,11 @@ namespace InputSubsystem
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            _textReader?.Dispose();
         }
     }
 }
