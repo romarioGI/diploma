@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertersSubsystem", "Conv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutputSubsystem", "OutputSubsystem\OutputSubsystem.csproj", "{4E9E1849-DFA5-4B65-B59A-052753715B48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{CF2F6020-29C7-4938-9C44-68818FBCB6A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{4E9E1849-DFA5-4B65-B59A-052753715B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E9E1849-DFA5-4B65-B59A-052753715B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E9E1849-DFA5-4B65-B59A-052753715B48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2F6020-29C7-4938-9C44-68818FBCB6A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2F6020-29C7-4938-9C44-68818FBCB6A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2F6020-29C7-4938-9C44-68818FBCB6A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2F6020-29C7-4938-9C44-68818FBCB6A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

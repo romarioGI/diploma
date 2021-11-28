@@ -1,13 +1,14 @@
 ﻿namespace InputSubsystem
 {
-    public readonly struct Symbol : ISymbol
+    //TODO можно ли делать структурой
+    public class Symbol : ISymbol
     {
-        public readonly int Number;
+        public readonly int Index;
         public readonly char Character;
 
-        public Symbol(int number, char character)
+        public Symbol(int index, char character)
         {
-            Number = number;
+            Index = index;
             Character = character;
         }
     }

@@ -12,16 +12,17 @@ namespace InputSubsystem
 
         public TextReaderInput([NotNull] TextReader textReader)
         {
-            _textReader = textReader ?? throw new NullReferenceException();
+            _textReader = textReader ?? throw new ArgumentNullException(nameof(textReader));
         }
 
         public IEnumerator<Symbol> GetEnumerator()
         {
             var symbolNumber = 0;
-            foreach (var c in _textReader.ReadToEnd())
-                yield return new Symbol(symbolNumber++, c);
+            var symbol = 0;
+            while ((symbol = _textReader.Read()) >= 0)
+                yield return new Symbol(symbolNumber++, Convert.ToChar(symbol));
         }
-
+        
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

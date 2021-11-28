@@ -1,9 +1,10 @@
-﻿using ParserSubsystem;
+﻿using System.Collections.Generic;
+using ParserSubsystem;
 
 namespace OutputSubsystem
 {
     public interface IOutput<in TE> where TE : IExpression
     {
-        public void Print(TE expression);
+        public IEnumerable<char> Print(TE expression);
     }
 }

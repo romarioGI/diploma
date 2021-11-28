@@ -19,17 +19,20 @@ namespace ParserSubsystem
             return _operands[index];
         }
 
-        internal SyntaxTree([NotNull] Token token, [NotNull] SyntaxTree[] operands)
+        private SyntaxTree(ExpressionType type, [NotNull] Token token, [NotNull] SyntaxTree[] operands)
         {
+            Type = type;
             Token = token ?? throw new ArgumentNullException(nameof(token));
             if (operands is null || operands.Any(x => x is null))
                 throw new ArgumentNullException(nameof(operands));
             _operands = operands;
         }
 
-        internal SyntaxTree([NotNull] Token token, [NotNull] IEnumerable<SyntaxTree> operands) : this(token,
-            operands.ToArray())
+        public SyntaxTree(ExpressionType type, [NotNull] Token token, [NotNull] IEnumerable<SyntaxTree> operands) :
+            this(type, token, operands.ToArray())
         {
         }
+
+        public ExpressionType Type { get; }
     }
 }
