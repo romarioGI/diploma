@@ -84,7 +84,7 @@ namespace ParserSubsystem
                 {
                     case < 0:
                         //TODO
-                        throw new Exception();
+                        throw new Exception("Bracket disbalance");
                     case 0 when predicate(lexeme):
                         yield return i - _begin;
                         ++count;

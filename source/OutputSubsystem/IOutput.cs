@@ -5,6 +5,6 @@ namespace OutputSubsystem
 {
     public interface IOutput<in TE> where TE : IExpression
     {
-        public IEnumerable<char> Print(TE expression);
+        public string Print(TE expression);
     }
 }

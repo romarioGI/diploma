@@ -6,7 +6,7 @@ using InputSubsystem;
 namespace ParserSubsystem
 {
     //TODO [MTH] add medium (integration) tests: input+parser+output
-    public class SimpleParser : IParser<Symbol, SyntaxTree>
+    public class SyntaxTreeParser : IParser<Symbol, SyntaxTree>
     {
         private const int NotFound = ParsingContext.NotFound;
 
@@ -198,6 +198,7 @@ namespace ParserSubsystem
             return new IdentifierToken(IdentifierType.Variable, firstIndex, lastIndex, representation);
         }
 
+        //TODO сделать так, чтобы приориеты у связок были разные
         private static SyntaxTree ParseInfixConnectiveFormula(ParsingContext ctx)
         {
             var connectiveIndex = ctx.FindFirstWithZeroBracketBalance(l => l.IsInfixPropositionalConnective());

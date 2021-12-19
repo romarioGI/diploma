@@ -9,7 +9,6 @@ namespace ParserSubsystem
         public override int FirstSymbolIndex { get; }
         public override int LastSymbolIndex { get; }
 
-        //TODO ещё не все
         public override string ToString() => Name switch
         {
             OperatorName.ExistentialQuantifier => "∃",
