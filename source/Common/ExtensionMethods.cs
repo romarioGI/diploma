@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 namespace Common
 {
+    //TODO [NTH] add small tests
     public static class ExtensionMethods
     {
         private static IEnumerable<T> ToIEnumerable<T>(this IEnumerator<T> source)
         {
+            if (source.Current is null)
+                yield break;
+            yield return source.Current;
             while (source.MoveNext())
                 yield return source.Current;
         }
@@ -31,12 +35,6 @@ namespace Common
             }
 
             return prev;
-        }
-
-        public static void DoAction<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var s in source)
-                action(s);
         }
     }
 }

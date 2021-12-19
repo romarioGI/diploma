@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Common;
 using InputSubsystem;
@@ -15,6 +16,7 @@ namespace ParserSubsystem
 
             symbols = symbols.CutFirst(out var head);
             FirstSymbolIndex = head.Index;
+            str.Append(head.Character);
 
             var last = symbols.DoActionAndReturnLast(s => str.Append(s.Character));
             LastSymbolIndex = last.Index;
@@ -26,5 +28,15 @@ namespace ParserSubsystem
         public override int LastSymbolIndex { get; }
 
         public override string ToString() => _string;
+
+        public bool IsOnlyLetters()
+        {
+            return _string.All(char.IsLetter);
+        }
+
+        public bool IsOnlyDigits()
+        {
+            return _string.All(char.IsDigit);
+        }
     }
 }

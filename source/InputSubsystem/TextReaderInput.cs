@@ -1,16 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace InputSubsystem
 {
+    //TODO [MTH] medium (integration) tests: input+parse+output=input
     public class TextReaderInput : IInput<Symbol>, IDisposable
     {
         private readonly TextReader _textReader;
 
-        public TextReaderInput([NotNull] TextReader textReader)
+        protected TextReaderInput(TextReader textReader)
         {
             _textReader = textReader ?? throw new ArgumentNullException(nameof(textReader));
         }
@@ -18,7 +18,7 @@ namespace InputSubsystem
         public IEnumerator<Symbol> GetEnumerator()
         {
             var symbolNumber = 0;
-            var symbol = 0;
+            int symbol;
             while ((symbol = _textReader.Read()) >= 0)
                 yield return new Symbol(symbolNumber++, Convert.ToChar(symbol));
         }

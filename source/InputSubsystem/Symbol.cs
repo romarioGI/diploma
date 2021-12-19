@@ -1,6 +1,5 @@
 ﻿namespace InputSubsystem
 {
-    //TODO можно ли делать структурой
     public class Symbol : ISymbol
     {
         public readonly int Index;

@@ -2,6 +2,19 @@ namespace ParserSubsystem
 {
     public enum OperatorName
     {
-        Name
+        ExistentialQuantifier,
+        UniversalQuantifier,
+        Conjunction,
+        Disjunction,
+        Implication,
+        Negation,
+        Less,
+        More,
+        Equal,
+        Plus,
+        Minus,
+        Multi,
+        Divide,
+        Exponentiation
     }
 }

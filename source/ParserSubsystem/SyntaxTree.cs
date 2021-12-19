@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace ParserSubsystem
@@ -19,18 +17,13 @@ namespace ParserSubsystem
             return _operands[index];
         }
 
-        private SyntaxTree(ExpressionType type, [NotNull] Token token, [NotNull] SyntaxTree[] operands)
+        public SyntaxTree(ExpressionType type, Token token, params SyntaxTree[] operands)
         {
             Type = type;
             Token = token ?? throw new ArgumentNullException(nameof(token));
             if (operands is null || operands.Any(x => x is null))
                 throw new ArgumentNullException(nameof(operands));
             _operands = operands;
-        }
-
-        public SyntaxTree(ExpressionType type, [NotNull] Token token, [NotNull] IEnumerable<SyntaxTree> operands) :
-            this(type, token, operands.ToArray())
-        {
         }
 
         public ExpressionType Type { get; }
