@@ -1,36 +1,38 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 namespace InputSubsystem
 {
     //TODO [MTH] medium (integration) tests: input+parse+output=input
-    public class TextReaderInput : IInput<Symbol>, IDisposable
+    public class TextReaderInput : IInput<Symbol>
     {
         private readonly TextReader _textReader;
+        private int _symbolNumber;
 
-        protected TextReaderInput(TextReader textReader)
+        public TextReaderInput(TextReader textReader)
         {
             _textReader = textReader ?? throw new ArgumentNullException(nameof(textReader));
+            Current = null;
+            _symbolNumber = 0;
+            IsOver = false;
         }
 
-        public IEnumerator<Symbol> GetEnumerator()
+        public bool MoveNext()
         {
-            var symbolNumber = 0;
-            int symbol;
-            while ((symbol = _textReader.Read()) >= 0)
-                yield return new Symbol(symbolNumber++, Convert.ToChar(symbol));
-        }
-        
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            var symbol = _textReader.Read();
+            if (symbol < 0)
+            {
+                IsOver = true;
+                return false;
+            }
+
+            Current = new Symbol(_symbolNumber++, Convert.ToChar(symbol));
+
+            return true;
         }
 
-        public void Dispose()
-        {
-            _textReader?.Dispose();
-        }
+        public Symbol Current { get; private set; }
+
+        public bool IsOver { get; private set; }
     }
 }

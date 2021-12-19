@@ -5,7 +5,7 @@ using ParserSubsystem;
 namespace OutputSubsystem
 {
     //TODO [NTH] все спецсимволы как в техе
-    public class TexLikeOutput : IOutput<SyntaxTree>
+    public class NativeOutput : IOutput<SyntaxTree>
     {
         public string Print(SyntaxTree expression)
         {
@@ -195,7 +195,7 @@ namespace OutputSubsystem
                 : AssociativityType.Left;
         }
 
-        private const int DefaultPriority = 0;
+        private const int DefaultPriority = 110;
 
         private static int GetPriority(OperatorToken operatorToken, NotationType type)
         {

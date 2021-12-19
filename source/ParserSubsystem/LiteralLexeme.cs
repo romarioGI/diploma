@@ -14,9 +14,8 @@ namespace ParserSubsystem
         {
             var str = new StringBuilder();
 
-            symbols = symbols.CutFirst(out var head);
+            symbols = symbols.GetFirst(out var head);
             FirstSymbolIndex = head.Index;
-            str.Append(head.Character);
 
             var last = symbols.DoActionAndReturnLast(s => str.Append(s.Character));
             LastSymbolIndex = last.Index;

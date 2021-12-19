@@ -8,30 +8,29 @@ namespace Common
     {
         private static IEnumerable<T> ToIEnumerable<T>(this IEnumerator<T> source)
         {
-            if (source.Current is null)
-                yield break;
             yield return source.Current;
             while (source.MoveNext())
                 yield return source.Current;
         }
 
-        public static IEnumerable<T> CutFirst<T>(this IEnumerable<T> source, out T first)
+        public static IEnumerable<T> GetFirst<T>(this IEnumerable<T> source, out T first)
         {
             using var enumerator = source.GetEnumerator();
-            first = enumerator.Current;
-            enumerator.MoveNext();
+            if (!enumerator.MoveNext())
+                //TODO
+                throw new Exception();
 
-            return enumerator.ToIEnumerable();
+            first = enumerator.Current;
+            return ToIEnumerable(enumerator);
         }
 
         public static T DoActionAndReturnLast<T>(this IEnumerable<T> source, Action<T> action)
         {
-            using var enumerator = source.GetEnumerator();
-            var prev = enumerator.Current;
-            while (enumerator.MoveNext())
+            var prev = default(T);
+            foreach (var cur in source)
             {
-                action(prev);
-                prev = enumerator.Current;
+                action(cur);
+                prev = cur;
             }
 
             return prev;

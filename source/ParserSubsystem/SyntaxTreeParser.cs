@@ -23,54 +23,53 @@ namespace ParserSubsystem
             return syntaxTree;
         }
 
-        private static IEnumerable<Lexeme> ToLexemes(IEnumerable<Symbol> input)
+        private static IEnumerable<Lexeme> ToLexemes(IInput<Symbol> input)
         {
-            using var enumerator = input.GetEnumerator();
-
-            if (enumerator.Current is null)
-                yield break;
-
-            do
+            input.MoveNext();
+            while(!input.IsOver)
             {
-                if (enumerator.Current.IsWhiteSpace())
-                    enumerator.MoveNext();
-                else if (enumerator.Current.IsLiteralSymbol() || enumerator.Current.IsBackslash())
-                    yield return GetLiteralLexeme(enumerator);
+                if (input.Current.IsWhiteSpace())
+                    input.MoveNext();
+                if (input.Current.IsLiteralSymbol() || input.Current.IsBackslash())
+                    yield return GetLiteralLexeme(input);
                 else
-                    yield return GetSpecialSymbolLexeme(enumerator);
+                    yield return GetSpecialSymbolLexeme(input);
 
-            } while (enumerator.Current is not null);
+            }
         }
 
-        private static Lexeme GetSpecialSymbolLexeme(IEnumerator<Symbol> enumerator)
+        private static Lexeme GetSpecialSymbolLexeme(IInput<Symbol> input)
         {
-            var lexeme = new SpecialSymbolLexeme(enumerator.Current);
-            enumerator.MoveNext();
+            var lexeme = new SpecialSymbolLexeme(input.Current);
+            input.MoveNext();
 
             return lexeme;
         }
 
-        private static Lexeme GetLiteralLexeme(IEnumerator<Symbol> enumerator)
+        private static Lexeme GetLiteralLexeme(IInput<Symbol> input)
         {
-            return new LiteralLexeme(GetLiteralSymbols(enumerator));
+            return new LiteralLexeme(GetLiteralSymbols(input));
         }
 
-        private static IEnumerable<Symbol> GetLiteralSymbols(IEnumerator<Symbol> enumerator)
+        private static IEnumerable<Symbol> GetLiteralSymbols(IInput<Symbol> input)
         {
-            if (enumerator.Current.IsBackslash())
+            if (input.Current.IsBackslash())
             {
-                yield return enumerator.Current;
-                enumerator.MoveNext();
+                yield return input.Current;
+                if (!input.MoveNext())
+                    yield break;
             }
 
-            while (enumerator.Current is not null)
-            {
-                if (enumerator.Current.IsLiteralSymbol())
-                    yield return enumerator.Current;
+            if (input.Current.IsLiteralSymbol())
+                yield return input.Current;
+            else
+                yield break;
+            
+            while (input.MoveNext())
+                if (input.Current.IsLiteralSymbol())
+                    yield return input.Current;
                 else
                     break;
-                enumerator.MoveNext();
-            }
         }
 
         private static SyntaxTree ToSyntaxTree(ImmutableArray<Lexeme> lexemes)
