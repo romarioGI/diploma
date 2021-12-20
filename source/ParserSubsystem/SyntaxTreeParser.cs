@@ -200,7 +200,7 @@ namespace ParserSubsystem
         //TODO сделать так, чтобы приориеты у связок были разные
         private static SyntaxTree ParseInfixConnectiveFormula(ParsingContext ctx)
         {
-            var connectiveIndex = ctx.FindFirstWithZeroBracketBalance(l => l.IsInfixPropositionalConnective());
+            var connectiveIndex = ctx.FindLastWithZeroBracketBalance(l => l.IsInfixPropositionalConnective());
             if (connectiveIndex == NotFound)
                 return ParsePrefixConnectiveFormula(ctx);
 
@@ -208,9 +208,9 @@ namespace ParserSubsystem
             var connectiveLexeme = tailCtx.First;
             var rightSubFormulaCtx = tailCtx.SkipFirst();
 
-            var leftSubFormula = ParsePrefixConnectiveFormula(leftSubFormulaCtx);
+            var leftSubFormula = ParseInfixConnectiveFormula(leftSubFormulaCtx);
             var connectiveToken = LexemeToOperatorToken(connectiveLexeme);
-            var rightSubFormula = ParseInfixConnectiveFormula(rightSubFormulaCtx);
+            var rightSubFormula = ParsePrefixConnectiveFormula(rightSubFormulaCtx);
 
             return new SyntaxTree(ExpressionType.Formula, connectiveToken, leftSubFormula, rightSubFormula);
         }
@@ -269,7 +269,7 @@ namespace ParserSubsystem
 
         private static SyntaxTree ParseInfixPlusOrMinusFunctionTerm(ParsingContext ctx)
         {
-            var functionIndex = ctx.FindFirstWithZeroBracketBalance(l => l.IsPlusOrMinus());
+            var functionIndex = ctx.FindLastWithZeroBracketBalance(l => l.IsPlusOrMinus());
             if (functionIndex == NotFound)
                 return ParseInfixMultiOrDivideFunctionTerm(ctx);
 
@@ -277,16 +277,16 @@ namespace ParserSubsystem
             var functionLexeme = tailCtx.First;
             var rightTermCtx = tailCtx.SkipFirst();
 
-            var leftTerm = ParseInfixMultiOrDivideFunctionTerm(leftTermCtx);
+            var leftTerm = ParseInfixPlusOrMinusFunctionTerm(leftTermCtx);
             var functionToken = LexemeToOperatorToken(functionLexeme);
-            var rightTerm = ParseInfixPlusOrMinusFunctionTerm(rightTermCtx);
+            var rightTerm = ParseInfixMultiOrDivideFunctionTerm(rightTermCtx);
 
             return new SyntaxTree(ExpressionType.Term, functionToken, leftTerm, rightTerm);
         }
 
         private static SyntaxTree ParseInfixMultiOrDivideFunctionTerm(ParsingContext ctx)
         {
-            var functionIndex = ctx.FindFirstWithZeroBracketBalance(l => l.IsMultiOrDivide());
+            var functionIndex = ctx.FindLastWithZeroBracketBalance(l => l.IsMultiOrDivide());
             if (functionIndex == NotFound)
                 return ParseExponentiationFunctionTerm(ctx);
 
@@ -294,16 +294,16 @@ namespace ParserSubsystem
             var functionLexeme = tailCtx.First;
             var rightTermCtx = tailCtx.SkipFirst();
 
-            var leftTerm = ParseExponentiationFunctionTerm(leftTermCtx);
+            var leftTerm = ParseInfixMultiOrDivideFunctionTerm(leftTermCtx);
             var functionToken = LexemeToOperatorToken(functionLexeme);
-            var rightTerm = ParseInfixMultiOrDivideFunctionTerm(rightTermCtx);
+            var rightTerm = ParseExponentiationFunctionTerm(rightTermCtx);
 
             return new SyntaxTree(ExpressionType.Term, functionToken, leftTerm, rightTerm);
         }
 
         private static SyntaxTree ParseExponentiationFunctionTerm(ParsingContext ctx)
         {
-            var functionIndex = ctx.FindLastWithZeroBracketBalance(l => l.IsExponentiation());
+            var functionIndex = ctx.FindFirstWithZeroBracketBalance(l => l.IsExponentiation());
             if (functionIndex == NotFound)
                 return ParseUnaryFunctionTerm(ctx);
 
@@ -311,9 +311,9 @@ namespace ParserSubsystem
             var functionLexeme = tailCtx.First;
             var rightTermCtx = tailCtx.SkipFirst();
 
-            var leftTerm = ParseExponentiationFunctionTerm(leftTermCtx);
+            var leftTerm = ParseUnaryFunctionTerm(leftTermCtx);
             var functionToken = LexemeToOperatorToken(functionLexeme);
-            var rightTerm = ParseUnaryFunctionTerm(rightTermCtx);
+            var rightTerm = ParseExponentiationFunctionTerm(rightTermCtx);
 
             return new SyntaxTree(ExpressionType.Term, functionToken, leftTerm, rightTerm);
         }

@@ -101,6 +101,7 @@ namespace ParserSubsystem
             return FindAllWithZeroBracketBalance(predicate).First();
         }
 
+        //TODO написать поиск с конца, чтобы уменьшить асимптотику
         public int FindLastWithZeroBracketBalance(Func<Lexeme, bool> predicate)
         {
             return FindAllWithZeroBracketBalance(predicate).Last();

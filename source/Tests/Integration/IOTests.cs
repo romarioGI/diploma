@@ -26,7 +26,9 @@ namespace Tests.Integration
             return new()
             {
                 { "1=1", "1=1" },
-                { "(\\exists x)(\\forall a)a*x^2^2+b*x+c=0 \\land c>0", "(∃x)(∀a)a*x^2^2+b*x+c=0&c>0" }
+                { "(2^2)^2=2^(2^2)", "(2^2)^2=2^2^2" },
+                { "(2+2)+2=2+(2+2)", "2+2+2=2+(2+2)" },
+                { "(\\exists x)(\\forall a)a*x^2^2+b*x+c=0 \\land c\\over 2>0", "(∃x)(∀a)a*x^2^2+b*x+c=0&c/2>0" }
             };
         }
     }

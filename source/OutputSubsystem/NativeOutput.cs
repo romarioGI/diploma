@@ -12,9 +12,9 @@ namespace OutputSubsystem
             return Print(expression, out _).ToString();
         }
 
-        private StringBuilder Print(SyntaxTree expression, out int maxBracketsFreeOperatorPriority)
+        private StringBuilder Print(SyntaxTree expression, out int minBracketsFreeOperatorPriority)
         {
-            maxBracketsFreeOperatorPriority = DefaultPriority;
+            minBracketsFreeOperatorPriority = MaxPriority;
             var result = new StringBuilder();
             switch (expression.Type)
             {
@@ -26,8 +26,6 @@ namespace OutputSubsystem
                         var notation = GetNotation(operatorToken, expression.OperandsCount);
                         var associativity = GetAssociativity(operatorToken);
                         var priority = GetPriority(operatorToken, notation);
-                        maxBracketsFreeOperatorPriority =
-                            Math.Max(maxBracketsFreeOperatorPriority, priority);
                         switch (notation)
                         {
                             case NotationType.QuantifierLike:
@@ -37,12 +35,14 @@ namespace OutputSubsystem
                                 result.Append(Print(expression.GetOperand(0)));
                                 result.Append(')');
                                 result.Append(Print(expression.GetOperand(1), out var subFormulaPriority));
-                                maxBracketsFreeOperatorPriority =
-                                    Math.Max(maxBracketsFreeOperatorPriority, subFormulaPriority);
+                                minBracketsFreeOperatorPriority =
+                                    Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
                                 break;
                             }
                             case NotationType.Prefix:
                             {
+                                minBracketsFreeOperatorPriority =
+                                    Math.Min(minBracketsFreeOperatorPriority, priority);
                                 result.Append(operatorToken);
                                 for (var i = 0; i < expression.OperandsCount; ++i)
                                 {
@@ -56,52 +56,22 @@ namespace OutputSubsystem
                                     else
                                     {
                                         result.Append(subFormulaString);
-                                        maxBracketsFreeOperatorPriority =
-                                            Math.Max(maxBracketsFreeOperatorPriority, subFormulaPriority);
+                                        minBracketsFreeOperatorPriority =
+                                            Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
                                     }
                                 }
 
                                 break;
                             }
                             case NotationType.Infix:
+                                minBracketsFreeOperatorPriority =
+                                    Math.Min(minBracketsFreeOperatorPriority, priority);
                                 var leftSubFormula = Print(expression.GetOperand(0), out var leftSubFormulaPriority);
                                 var rightSubFormula = Print(expression.GetOperand(1), out var rightSubFormulaPriority);
 
                                 switch (associativity)
                                 {
                                     case AssociativityType.Left:
-                                    {
-                                        if (leftSubFormulaPriority <= priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(leftSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(leftSubFormula);
-                                            maxBracketsFreeOperatorPriority =
-                                                Math.Max(maxBracketsFreeOperatorPriority, leftSubFormulaPriority);
-                                        }
-
-                                        result.Append(operatorToken);
-
-                                        if (rightSubFormulaPriority < priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(rightSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(rightSubFormula);
-                                            maxBracketsFreeOperatorPriority =
-                                                Math.Max(maxBracketsFreeOperatorPriority, rightSubFormulaPriority);
-                                        }
-
-                                        break;
-                                    }
-                                    case AssociativityType.Right:
                                     {
                                         if (leftSubFormulaPriority < priority)
                                         {
@@ -112,8 +82,8 @@ namespace OutputSubsystem
                                         else
                                         {
                                             result.Append(leftSubFormula);
-                                            maxBracketsFreeOperatorPriority =
-                                                Math.Max(maxBracketsFreeOperatorPriority, leftSubFormulaPriority);
+                                            minBracketsFreeOperatorPriority =
+                                                Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
                                         }
 
                                         result.Append(operatorToken);
@@ -127,8 +97,40 @@ namespace OutputSubsystem
                                         else
                                         {
                                             result.Append(rightSubFormula);
-                                            maxBracketsFreeOperatorPriority =
-                                                Math.Max(maxBracketsFreeOperatorPriority, rightSubFormulaPriority);
+                                            minBracketsFreeOperatorPriority =
+                                                Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
+                                        }
+
+                                        break;
+                                    }
+                                    case AssociativityType.Right:
+                                    {
+                                        if (leftSubFormulaPriority <= priority)
+                                        {
+                                            result.Append('(');
+                                            result.Append(leftSubFormula);
+                                            result.Append(')');
+                                        }
+                                        else
+                                        {
+                                            result.Append(leftSubFormula);
+                                            minBracketsFreeOperatorPriority =
+                                                Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
+                                        }
+
+                                        result.Append(operatorToken);
+
+                                        if (rightSubFormulaPriority < priority)
+                                        {
+                                            result.Append('(');
+                                            result.Append(rightSubFormula);
+                                            result.Append(')');
+                                        }
+                                        else
+                                        {
+                                            result.Append(rightSubFormula);
+                                            minBracketsFreeOperatorPriority =
+                                                Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
                                         }
 
                                         break;
@@ -195,7 +197,7 @@ namespace OutputSubsystem
                 : AssociativityType.Left;
         }
 
-        private const int DefaultPriority = 110;
+        private const int MaxPriority = int.MaxValue;
 
         private static int GetPriority(OperatorToken operatorToken, NotationType type)
         {
