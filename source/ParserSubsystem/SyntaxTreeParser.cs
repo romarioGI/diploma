@@ -5,7 +5,6 @@ using InputSubsystem;
 
 namespace ParserSubsystem
 {
-    //TODO [MTH] add medium (integration) tests: input+parser+output
     public class SyntaxTreeParser : IParser<Symbol, SyntaxTree>
     {
         private const int NotFound = ParsingContext.NotFound;
@@ -26,7 +25,7 @@ namespace ParserSubsystem
         private static IEnumerable<Lexeme> ToLexemes(IInput<Symbol> input)
         {
             input.MoveNext();
-            while(!input.IsOver)
+            while (!input.IsOver)
             {
                 if (input.Current.IsWhiteSpace())
                     input.MoveNext();
@@ -64,7 +63,7 @@ namespace ParserSubsystem
                 yield return input.Current;
             else
                 yield break;
-            
+
             while (input.MoveNext())
                 if (input.Current.IsLiteralSymbol())
                     yield return input.Current;
@@ -176,25 +175,21 @@ namespace ParserSubsystem
 
             constant = new IdentifierToken(
                 IdentifierType.Constant,
-                digitLexeme.FirstSymbolIndex,
-                digitLexeme.LastSymbolIndex,
                 digitLexeme.ToString()
             );
-            
+
             return ctx.LexemeCount - curCtx.LexemeCount;
         }
 
         private static OperatorToken LexemeToOperatorToken(Lexeme lexeme)
         {
-            return new(lexeme.ToOperatorName(), lexeme.FirstSymbolIndex, lexeme.LastSymbolIndex);
+            return new(lexeme.ToOperatorName());
         }
 
         private static IdentifierToken LexemeToIdentifierToken(params Lexeme[] lexemes)
         {
-            var firstIndex = lexemes[0].FirstSymbolIndex;
-            var lastIndex = lexemes[^1].LastSymbolIndex;
             var representation = string.Join<Lexeme>(string.Empty, lexemes);
-            return new IdentifierToken(IdentifierType.Variable, firstIndex, lastIndex, representation);
+            return new IdentifierToken(IdentifierType.Variable, representation);
         }
 
         //TODO сделать так, чтобы приориеты у связок были разные

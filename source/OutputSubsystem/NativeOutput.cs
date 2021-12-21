@@ -19,150 +19,169 @@ namespace OutputSubsystem
             switch (expression.Type)
             {
                 case ExpressionType.Formula:
-                case ExpressionType.Term:
-                {
-                    if (expression.Token is OperatorToken operatorToken)
-                    {
-                        var notation = GetNotation(operatorToken, expression.OperandsCount);
-                        var associativity = GetAssociativity(operatorToken);
-                        var priority = GetPriority(operatorToken, notation);
-                        switch (notation)
-                        {
-                            case NotationType.QuantifierLike:
-                            {
-                                result.Append('(');
-                                result.Append(operatorToken);
-                                result.Append(Print(expression.GetOperand(0)));
-                                result.Append(')');
-                                result.Append(Print(expression.GetOperand(1), out var subFormulaPriority));
-                                minBracketsFreeOperatorPriority =
-                                    Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
-                                break;
-                            }
-                            case NotationType.Prefix:
-                            {
-                                minBracketsFreeOperatorPriority =
-                                    Math.Min(minBracketsFreeOperatorPriority, priority);
-                                result.Append(operatorToken);
-                                for (var i = 0; i < expression.OperandsCount; ++i)
-                                {
-                                    var subFormulaString = Print(expression.GetOperand(i), out var subFormulaPriority);
-                                    if (subFormulaPriority < priority)
-                                    {
-                                        result.Append('(');
-                                        result.Append(subFormulaString);
-                                        result.Append(')');
-                                    }
-                                    else
-                                    {
-                                        result.Append(subFormulaString);
-                                        minBracketsFreeOperatorPriority =
-                                            Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
-                                    }
-                                }
-
-                                break;
-                            }
-                            case NotationType.Infix:
-                                minBracketsFreeOperatorPriority =
-                                    Math.Min(minBracketsFreeOperatorPriority, priority);
-                                var leftSubFormula = Print(expression.GetOperand(0), out var leftSubFormulaPriority);
-                                var rightSubFormula = Print(expression.GetOperand(1), out var rightSubFormulaPriority);
-
-                                switch (associativity)
-                                {
-                                    case AssociativityType.Left:
-                                    {
-                                        if (leftSubFormulaPriority < priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(leftSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(leftSubFormula);
-                                            minBracketsFreeOperatorPriority =
-                                                Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
-                                        }
-
-                                        result.Append(operatorToken);
-
-                                        if (rightSubFormulaPriority <= priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(rightSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(rightSubFormula);
-                                            minBracketsFreeOperatorPriority =
-                                                Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
-                                        }
-
-                                        break;
-                                    }
-                                    case AssociativityType.Right:
-                                    {
-                                        if (leftSubFormulaPriority <= priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(leftSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(leftSubFormula);
-                                            minBracketsFreeOperatorPriority =
-                                                Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
-                                        }
-
-                                        result.Append(operatorToken);
-
-                                        if (rightSubFormulaPriority < priority)
-                                        {
-                                            result.Append('(');
-                                            result.Append(rightSubFormula);
-                                            result.Append(')');
-                                        }
-                                        else
-                                        {
-                                            result.Append(rightSubFormula);
-                                            minBracketsFreeOperatorPriority =
-                                                Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
-                                        }
-
-                                        break;
-                                    }
-                                    default:
-                                        throw new NotSupportedException();
-                                }
-
-                                break;
-                            default:
-                                throw new NotSupportedException();
-                        }
-                    }
-                    else
-                        throw new NotSupportedException();
-
+                    result.Append(PrintFormulaOrTerm(expression, out minBracketsFreeOperatorPriority));
                     break;
-                }
+                case ExpressionType.Term:
+                    result.Append(PrintFormulaOrTerm(expression, out minBracketsFreeOperatorPriority));
+                    break;
                 case ExpressionType.Identifier:
-                    switch (expression.Token)
-                    {
-                        case IdentifierToken identifierToken:
-                            result.Append(identifierToken);
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
-
+                    result.Append(PrintIdentifier(expression));
                     break;
                 default:
                     throw new NotSupportedException();
             }
+
+            return result;
+        }
+
+        private StringBuilder PrintIdentifier(SyntaxTree expression)
+        {
+            var result = new StringBuilder();
+            
+            switch (expression.Token)
+            {
+                case IdentifierToken identifierToken:
+                    result.Append(TokenToString(identifierToken));
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
+            return result;
+        }
+
+        private StringBuilder PrintFormulaOrTerm(SyntaxTree expression, out int minBracketsFreeOperatorPriority)
+        {
+            minBracketsFreeOperatorPriority = MaxPriority;
+
+            var result = new StringBuilder();
+            if (expression.Token is OperatorToken operatorToken)
+            {
+                var notation = GetNotation(operatorToken, expression.OperandsCount);
+                var associativity = GetAssociativity(operatorToken);
+                var priority = GetPriority(operatorToken, notation);
+                switch (notation)
+                {
+                    case NotationType.QuantifierLike:
+                    {
+                        result.Append('(');
+                        result.Append(TokenToString(operatorToken));
+                        result.Append(Print(expression.GetOperand(0), out _));
+                        result.Append(')');
+                        result.Append(Print(expression.GetOperand(1), out var subFormulaPriority));
+                        minBracketsFreeOperatorPriority =
+                            Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
+                        break;
+                    }
+                    case NotationType.Prefix:
+                    {
+                        minBracketsFreeOperatorPriority =
+                            Math.Min(minBracketsFreeOperatorPriority, priority);
+                        result.Append(TokenToString(operatorToken));
+                        for (var i = 0; i < expression.OperandsCount; ++i)
+                        {
+                            var subFormulaString = Print(expression.GetOperand(i), out var subFormulaPriority);
+                            if (subFormulaPriority < priority)
+                            {
+                                result.Append('(');
+                                result.Append(subFormulaString);
+                                result.Append(')');
+                            }
+                            else
+                            {
+                                result.Append(subFormulaString);
+                                minBracketsFreeOperatorPriority =
+                                    Math.Min(minBracketsFreeOperatorPriority, subFormulaPriority);
+                            }
+                        }
+
+                        break;
+                    }
+                    case NotationType.Infix:
+                    {
+                        minBracketsFreeOperatorPriority =
+                            Math.Min(minBracketsFreeOperatorPriority, priority);
+                        var leftSubFormula = Print(expression.GetOperand(0), out var leftSubFormulaPriority);
+                        var rightSubFormula = Print(expression.GetOperand(1), out var rightSubFormulaPriority);
+
+                        switch (associativity)
+                        {
+                            case AssociativityType.Left:
+                            {
+                                if (leftSubFormulaPriority < priority)
+                                {
+                                    result.Append('(');
+                                    result.Append(leftSubFormula);
+                                    result.Append(')');
+                                }
+                                else
+                                {
+                                    result.Append(leftSubFormula);
+                                    minBracketsFreeOperatorPriority =
+                                        Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
+                                }
+
+                                result.Append(TokenToString(operatorToken));
+
+                                if (rightSubFormulaPriority <= priority)
+                                {
+                                    result.Append('(');
+                                    result.Append(rightSubFormula);
+                                    result.Append(')');
+                                }
+                                else
+                                {
+                                    result.Append(rightSubFormula);
+                                    minBracketsFreeOperatorPriority =
+                                        Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
+                                }
+
+                                break;
+                            }
+                            case AssociativityType.Right:
+                            {
+                                if (leftSubFormulaPriority <= priority)
+                                {
+                                    result.Append('(');
+                                    result.Append(leftSubFormula);
+                                    result.Append(')');
+                                }
+                                else
+                                {
+                                    result.Append(leftSubFormula);
+                                    minBracketsFreeOperatorPriority =
+                                        Math.Min(minBracketsFreeOperatorPriority, leftSubFormulaPriority);
+                                }
+
+                                result.Append(TokenToString(operatorToken));
+
+                                if (rightSubFormulaPriority < priority)
+                                {
+                                    result.Append('(');
+                                    result.Append(rightSubFormula);
+                                    result.Append(')');
+                                }
+                                else
+                                {
+                                    result.Append(rightSubFormula);
+                                    minBracketsFreeOperatorPriority =
+                                        Math.Min(minBracketsFreeOperatorPriority, rightSubFormulaPriority);
+                                }
+
+                                break;
+                            }
+                            default:
+                                throw new NotSupportedException();
+                        }
+
+                        break;
+                    }
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            else
+                throw new NotSupportedException();
 
             return result;
         }
@@ -186,6 +205,8 @@ namespace OutputSubsystem
                 OperatorName.Multi when operandsCount == 2 => NotationType.Infix,
                 OperatorName.Divide when operandsCount == 2 => NotationType.Infix,
                 OperatorName.Exponentiation when operandsCount == 2 => NotationType.Infix,
+                OperatorName.True when operandsCount == 0 => NotationType.Prefix,
+                OperatorName.False when operandsCount == 0 => NotationType.Prefix,
                 _ => throw new NotSupportedException()
             };
         }
@@ -218,8 +239,16 @@ namespace OutputSubsystem
                 OperatorName.Divide => 80,
                 OperatorName.Exponentiation => 90,
                 OperatorName.Minus when type == NotationType.Prefix => 100,
+                OperatorName.True => 110,
+                OperatorName.False => 110,
                 _ => throw new NotSupportedException()
             };
+        }
+
+        //TODO для латеха нужно операторы переложить и переменные записать иначе
+        protected virtual string TokenToString(Token token)
+        {
+            return token.ToString();
         }
     }
 }

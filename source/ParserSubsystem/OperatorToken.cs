@@ -6,9 +6,6 @@ namespace ParserSubsystem
     {
         public readonly OperatorName Name;
 
-        public override int FirstSymbolIndex { get; }
-        public override int LastSymbolIndex { get; }
-
         public override string ToString() => Name switch
         {
             OperatorName.ExistentialQuantifier => "∃",
@@ -25,14 +22,14 @@ namespace ParserSubsystem
             OperatorName.Multi => "*",
             OperatorName.Divide => "/",
             OperatorName.Exponentiation => "^",
+            OperatorName.True => @"\true",
+            OperatorName.False => @"\false",
             _ => throw new NotSupportedException()
         };
 
-        public OperatorToken(OperatorName name, int firstSymbolIndex, int lastSymbolIndex)
+        public OperatorToken(OperatorName name)
         {
             Name = name;
-            FirstSymbolIndex = firstSymbolIndex;
-            LastSymbolIndex = lastSymbolIndex;
         }
     }
 }

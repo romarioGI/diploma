@@ -15,6 +15,8 @@ namespace ParserSubsystem
         Minus,
         Multi,
         Divide,
-        Exponentiation
+        Exponentiation,
+        True,
+        False
     }
 }

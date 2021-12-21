@@ -1,20 +1,21 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace ParserSubsystem
 {
     public class SyntaxTree : IExpression
     {
-        private readonly SyntaxTree[] _operands;
-
         public readonly Token Token;
 
-        public int OperandsCount => _operands.Length;
+        public int OperandsCount => Operands.Length;
+
+        public ImmutableArray<SyntaxTree> Operands { get; }
 
         public SyntaxTree GetOperand(int index)
         {
             if (index < 0 || index > OperandsCount) throw new IndexOutOfRangeException();
-            return _operands[index];
+            return Operands[index];
         }
 
         public SyntaxTree(ExpressionType type, Token token, params SyntaxTree[] operands)
@@ -23,7 +24,7 @@ namespace ParserSubsystem
             Token = token ?? throw new ArgumentNullException(nameof(token));
             if (operands is null || operands.Any(x => x is null))
                 throw new ArgumentNullException(nameof(operands));
-            _operands = operands;
+            Operands = operands.ToImmutableArray();
         }
 
         public ExpressionType Type { get; }

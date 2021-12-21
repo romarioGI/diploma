@@ -28,7 +28,8 @@ namespace Tests.Integration
                 { "1=1", "1=1" },
                 { "(2^2)^2=2^(2^2)", "(2^2)^2=2^2^2" },
                 { "(2+2)+2=2+(2+2)", "2+2+2=2+(2+2)" },
-                { "(\\exists x)(\\forall a)a*x^2^2+b*x+c=0 \\land c\\over 2>0", "(∃x)(∀a)a*x^2^2+b*x+c=0&c/2>0" }
+                { "(\\exists x)(\\forall a)a*x^2^2+b*x+c=0 \\land c\\over 2>0", "(∃x)(∀a)a*x^2^2+b*x+c=0&c/2>0" },
+                {"(\\exists x_1)(\\exists x_2)\\lnot x_1=x_2 \\land a*x^2+b*x+c=0", "(∃x_1)(∃x_2)¬x_1=x_2&a*x^2+b*x+c=0"}
             };
         }
     }
