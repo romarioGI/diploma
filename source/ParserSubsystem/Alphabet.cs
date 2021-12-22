@@ -182,5 +182,12 @@ namespace ParserSubsystem
             return name == OperatorName.ExistentialQuantifier
                    || name == OperatorName.UniversalQuantifier;
         }
+
+        public static bool IsPredicate(this OperatorName name)
+        {
+            return name == OperatorName.Less
+                   || name == OperatorName.More
+                   || name == OperatorName.Equal;
+        }
     }
 }
