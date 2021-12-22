@@ -3,7 +3,7 @@ using ParserSubsystem;
 
 namespace ProcessorsSubsystem
 {
-    public class ZeroArityPredicateEliminator: IProcessor<SyntaxTree>
+    public class ZeroArityPredicateEliminator : ISyntaxTreeProcessor
     {
         private static bool IsTruePredicate(SyntaxTree expression)
         {
@@ -26,7 +26,7 @@ namespace ProcessorsSubsystem
         {
             return new(ExpressionType.Term, new OperatorToken(OperatorName.True));
         }
-        
+
         private static SyntaxTree GetFalseExpression()
         {
             return new(ExpressionType.Term, new OperatorToken(OperatorName.False));
@@ -40,11 +40,24 @@ namespace ProcessorsSubsystem
 
         public SyntaxTree Do(SyntaxTree expression)
         {
-            var operands = expression.Operands.Select(Do).ToArray();
-            if (expression.Type != ExpressionType.Formula
+            return DoInner(expression, true);
+        }
+
+        public SyntaxTree DoOnlyRoot(SyntaxTree syntaxTree)
+        {
+            return DoInner(syntaxTree, false);
+        }
+
+        private SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively)
+        {
+            var expOperands = syntaxTree.Operands.AsParallel();
+            if (recursively)
+                expOperands = expOperands.Select(Do);
+            var operands = expOperands.ToArray();
+            if (syntaxTree.Type != ExpressionType.Formula
                 || !operands.Any(IsBooleanPredicate)
-                || expression.Token is not OperatorToken operatorToken) 
-                return expression;
+                || syntaxTree.Token is not OperatorToken operatorToken)
+                return syntaxTree;
             switch (operatorToken.Name)
             {
                 case OperatorName.Conjunction when operands.Length == 2:
@@ -57,7 +70,7 @@ namespace ProcessorsSubsystem
                         return operands[1];
                     if (IsTruePredicate(operands[1]))
                         return operands[0];
-                    return expression;
+                    return syntaxTree;
                 }
                 case OperatorName.Disjunction when operands.Length == 2:
                 {
@@ -69,7 +82,7 @@ namespace ProcessorsSubsystem
                         return operands[1];
                     if (IsFalsePredicate(operands[1]))
                         return operands[0];
-                    return expression;
+                    return syntaxTree;
                 }
                 case OperatorName.Implication when operands.Length == 2:
                 {
@@ -81,7 +94,7 @@ namespace ProcessorsSubsystem
                         return GetTrueExpression();
                     if (IsFalsePredicate(operands[1]))
                         return GetNegationExpression(operands[0]);
-                    return expression;
+                    return syntaxTree;
                 }
                 case OperatorName.Negation when operands.Length == 1:
                 {
@@ -89,22 +102,22 @@ namespace ProcessorsSubsystem
                         return GetFalseExpression();
                     if (IsFalsePredicate(operands[0]))
                         return GetTrueExpression();
-                    return expression;
+                    return syntaxTree;
                 }
                 case OperatorName.ExistentialQuantifier when operands.Length == 2:
                 {
                     if (IsBooleanPredicate(operands[1]))
                         return operands[1];
-                    return expression;
+                    return syntaxTree;
                 }
                 case OperatorName.UniversalQuantifier when operands.Length == 2:
                 {
                     if (IsBooleanPredicate(operands[1]))
                         return operands[1];
-                    return expression;
+                    return syntaxTree;
                 }
                 default:
-                    return expression;
+                    return syntaxTree;
             }
         }
     }

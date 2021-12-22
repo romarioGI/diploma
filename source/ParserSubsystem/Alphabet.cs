@@ -168,5 +168,19 @@ namespace ParserSubsystem
                 return OperatorName.Exponentiation;
             throw new NotSupportedException();
         }
+
+        public static bool IsConnective(this OperatorName name)
+        {
+            return name == OperatorName.Conjunction
+                   || name == OperatorName.Disjunction
+                   || name == OperatorName.Implication
+                   || name == OperatorName.Negation;
+        }
+
+        public static bool IsQuantifier(this OperatorName name)
+        {
+            return name == OperatorName.ExistentialQuantifier
+                   || name == OperatorName.UniversalQuantifier;
+        }
     }
 }
