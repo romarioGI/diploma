@@ -6,19 +6,9 @@ using ParserSubsystem;
 
 namespace ProcessorsSubsystem
 {
-    public class TarskiQuantifierEliminator : ISyntaxTreeProcessor
+    public class TarskiQuantifierEliminator : SyntaxTreeProcessor
     {
-        public SyntaxTree Do(SyntaxTree expression)
-        {
-            return DoInner(expression, true);
-        }
-
-        public SyntaxTree DoOnlyRoot(SyntaxTree syntaxTree)
-        {
-            return DoInner(syntaxTree, false);
-        }
-
-        private SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively)
+        protected override SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively)
         {
             switch (syntaxTree.Type)
             {
@@ -42,7 +32,7 @@ namespace ProcessorsSubsystem
                                     var result = TarskiElimination(operatorToken, variable, subFormula);
                                     if (result is not null)
                                     {
-                                        result = Processors.ZeroArityPredicateEliminator.DoOnlyRoot(result);
+                                        result = Processors.ZeroArityPredicateEliminator.Do(result);
 
                                         return result;
                                     }
@@ -97,6 +87,7 @@ namespace ProcessorsSubsystem
             return true;
         }
 
+        //TODO для полниомов, насыщения системы и таблицы тарского есть тесты в старом коде, скопировать их в этот проект
         private static SyntaxTree TarskiElimination(OperatorToken quantifier, IdentifierToken variable,
             SyntaxTree subFormula)
         {
@@ -157,28 +148,80 @@ namespace ProcessorsSubsystem
                 term = new SyntaxTree(ExpressionType.Term, new OperatorToken(OperatorName.Minus), operands[0],
                     operands[1]);
 
-            return ToPolynomial(term, variable);
+            return ToPolynomial(term, new VariableName(variable.ToString()));
         }
 
-        private static Polynomial ToPolynomial(SyntaxTree term, IdentifierToken variable)
+        private static Polynomial ToPolynomial(SyntaxTree term, VariableName variable)
         {
             var token = term.Token;
-            if (term.Type == ExpressionType.Term && token is OperatorToken operatorToken)
+            switch (term.Type)
             {
-
-            }
-            else if (term.Type == ExpressionType.Identifier && token is IdentifierToken identifierToken)
-            {
-                
+                case ExpressionType.Term when token is OperatorToken operatorToken:
+                    switch (term.OperandsCount)
+                    {
+                        case 1:
+                        {
+                            var p1 = ToPolynomial(term.Operands[0], variable);
+                            return operatorToken.Name switch
+                            {
+                                OperatorName.Minus => -p1,
+                                _ => throw new NotSupportedException()
+                            };
+                        }
+                        case 2:
+                        {
+                            var p1 = ToPolynomial(term.Operands[0], variable);
+                            var p2 = ToPolynomial(term.Operands[1], variable);
+                            return operatorToken.Name switch
+                            {
+                                OperatorName.Plus => p1 + p2,
+                                OperatorName.Minus => p1 - p2,
+                                OperatorName.Multi => p1 * p2,
+                                OperatorName.Divide when p2.Degree > 1 => throw new Exception(
+                                    "not support polynomial divide"),
+                                OperatorName.Divide => p1 / p2,
+                                OperatorName.Exponentiation when p2.Degree > 1 => throw new Exception(
+                                    "not support polynomial pow"),
+                                OperatorName.Exponentiation when !p2.Leading.IsNatural => throw new Exception(
+                                    "not support not natural pow"),
+                                OperatorName.Exponentiation => p1.Pow(p2.Leading),
+                                _ => throw new NotSupportedException()
+                            };
+                        }
+                        default:
+                            throw new NotSupportedException();
+                    }
+                case ExpressionType.Identifier when token is IdentifierToken identifierToken:
+                    switch (identifierToken.Type)
+                    {
+                        case IdentifierType.Constant:
+                            return new Polynomial(
+                                new RationalNumber[] {Convert.ToInt32(identifierToken.ToString())},
+                                variable
+                            );
+                        case IdentifierType.Variable:
+                        {
+                            var curVariable = new VariableName(identifierToken.ToString());
+                            return curVariable.Equals(variable) switch
+                            {
+                                false => throw new Exception("VariableDomainException"),
+                                _ => new Polynomial(new RationalNumber[] {0, 1}, variable)
+                            };
+                        }
+                        default:
+                            throw new NotSupportedException();
+                    }
+                default:
+                    throw new NotSupportedException();
             }
         }
 
         private static IEnumerable<Polynomial> Saturate(IEnumerable<Polynomial> polynomials)
         {
-            return SimpleSaturator.Saturate(polynomials);
+            return Saturator.Saturate(polynomials);
         }
 
-        private static SimpleTarskiTable BuildTarskiTable(IEnumerable<Polynomial> saturatedSystem)
+        private static TarskiTable BuildTarskiTable(IEnumerable<Polynomial> saturatedSystem)
         {
             return new(saturatedSystem);
         }
@@ -193,7 +236,7 @@ namespace ProcessorsSubsystem
             return new(ExpressionType.Term, new OperatorToken(OperatorName.False));
         }
 
-        private static SyntaxTree BuildEquivalentFormula(SimpleTarskiTable tarskiTable, OperatorToken quantifier,
+        private static SyntaxTree BuildEquivalentFormula(TarskiTable tarskiTable, OperatorToken quantifier,
             SyntaxTree formula, Dictionary<SyntaxTree, (Polynomial, Sign)> predicates)
         {
             var tarskiTableWidth = tarskiTable.Width;

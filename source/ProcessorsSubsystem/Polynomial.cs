@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace ProcessorsSubsystem
 {
-    public class Polynomial : IEquatable<Polynomial>
+    public class Polynomial : IEquatable<Polynomial>, IComparable<Polynomial>
     {
         private readonly RationalNumber[] _coefficients;
         private readonly int _hashCode;
@@ -290,6 +290,17 @@ namespace ProcessorsSubsystem
                 res = HashCode.Combine(coefficient, res);
 
             return HashCode.Combine(res, VariableName, Degree);
+        }
+
+        public int CompareTo(Polynomial other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            var hashCodeComparison = _hashCode.CompareTo(other._hashCode);
+            if (hashCodeComparison != 0) return hashCodeComparison;
+            var variableNameComparison = Comparer<VariableName>.Default.Compare(VariableName, other.VariableName);
+            if (variableNameComparison != 0) return variableNameComparison;
+            return Degree.CompareTo(other.Degree);
         }
     }
 }

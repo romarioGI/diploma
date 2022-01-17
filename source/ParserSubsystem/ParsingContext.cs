@@ -83,7 +83,6 @@ namespace ParserSubsystem
                 switch (bracketBalance)
                 {
                     case < 0:
-                        //TODO
                         throw new Exception("Bracket disbalance");
                     case 0 when predicate(lexeme):
                         yield return i - _begin;
@@ -101,7 +100,6 @@ namespace ParserSubsystem
             return FindAllWithZeroBracketBalance(predicate).First();
         }
 
-        //TODO написать поиск с конца, чтобы уменьшить асимптотику
         public int FindLastWithZeroBracketBalance(Func<Lexeme, bool> predicate)
         {
             return FindAllWithZeroBracketBalance(predicate).Last();

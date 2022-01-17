@@ -3,7 +3,6 @@ using System.IO;
 
 namespace InputSubsystem
 {
-    //TODO [MTH] medium (integration) tests: input+parse+output=input
     public class TextReaderInput : IInput<Symbol>
     {
         private readonly TextReader _textReader;

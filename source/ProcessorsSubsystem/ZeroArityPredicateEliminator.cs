@@ -3,7 +3,7 @@ using ParserSubsystem;
 
 namespace ProcessorsSubsystem
 {
-    public class ZeroArityPredicateEliminator : ISyntaxTreeProcessor
+    public class ZeroArityPredicateEliminator : SyntaxTreeProcessor
     {
         private static bool IsTruePredicate(SyntaxTree expression)
         {
@@ -38,17 +38,7 @@ namespace ProcessorsSubsystem
             return Do(result);
         }
 
-        public SyntaxTree Do(SyntaxTree expression)
-        {
-            return DoInner(expression, true);
-        }
-
-        public SyntaxTree DoOnlyRoot(SyntaxTree syntaxTree)
-        {
-            return DoInner(syntaxTree, false);
-        }
-
-        private SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively)
+        protected override SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively)
         {
             var expOperands = syntaxTree.Operands.AsParallel();
             if (recursively)

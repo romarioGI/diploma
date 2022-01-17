@@ -6,20 +6,20 @@ namespace ProcessorsSubsystem
     /// <summary>
     /// saturator of a polynomial system
     /// </summary>
-    public static class SimpleSaturator
+    public static class Saturator
     {
         public static IEnumerable<Polynomial> Saturate(IEnumerable<Polynomial> polynomials)
         {
             var result = new HashSet<Polynomial>();
 
-            var system = polynomials.ToList();
+            var system = polynomials.Distinct().ToList();
 
             if (system.All(p => p.IsZero))
-                return system.Distinct();
+                return system;
 
             var queue = new Queue<Polynomial>();
 
-            foreach (var p in system.Where(p => !p.IsZero).Distinct())
+            foreach (var p in system.Where(p => !p.IsZero))
                 queue.Enqueue(p);
 
             var multiplication = queue

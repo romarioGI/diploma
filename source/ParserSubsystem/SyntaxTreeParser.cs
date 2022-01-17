@@ -12,11 +12,9 @@ namespace ParserSubsystem
         public SyntaxTree Parse(IInput<Symbol> input)
         {
             if (input is null)
-                //TODO  это системная ошибка, она должна перехватываться в ошибку "что-то пошло не так", в отличии от ошибок парсинга, которые можно отдавать as is
                 throw new Exception("Input is null");
 
             var lexemes = ToLexemes(input).ToImmutableArray();
-            //TODO [NTH] залоггировать, что с лексемами всё ок, можно выписать сами лексемы
             var syntaxTree = ToSyntaxTree(lexemes);
 
             return syntaxTree;
@@ -192,7 +190,6 @@ namespace ParserSubsystem
             return new IdentifierToken(IdentifierType.Variable, representation);
         }
 
-        //TODO сделать так, чтобы приориеты у связок были разные
         private static SyntaxTree ParseInfixConnectiveFormula(ParsingContext ctx)
         {
             var connectiveIndex = ctx.FindLastWithZeroBracketBalance(l => l.IsInfixPropositionalConnective());
@@ -368,20 +365,17 @@ namespace ParserSubsystem
 
         private static SyntaxTree ExpectedLexemeButEmpty(ParsingContext ctx)
         {
-            //TODO надо прокинуть индекс, ибо не неожиданный конец может быть в середине, если парсим левую подформлу
-            throw new Exception("Expected lexeme, but empty at ");
+            throw new Exception($"Expected lexeme, but empty");
         }
 
         private static SyntaxTree UnexpectedLexeme(ParsingContext ctx)
         {
-            //TODO
             throw new Exception($"Unexpected lexeme at {ctx.First.FirstSymbolIndex}-{ctx.First.LastSymbolIndex}");
         }
 
         private static void ThrowIfIsNotEmpty(ParsingContext ctx)
         {
             if (!ctx.IsEmpty)
-                //TODO
                 throw new Exception(
                     $"Expected end, but has lexeme at {ctx.First.FirstSymbolIndex}-{ctx.First.LastSymbolIndex}");
         }

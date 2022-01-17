@@ -4,7 +4,6 @@ using ParserSubsystem;
 
 namespace OutputSubsystem
 {
-    //TODO [NTH] все спецсимволы как в техе
     public class NativeOutput : IOutput<SyntaxTree>
     {
         public string Print(SyntaxTree expression)
@@ -245,7 +244,6 @@ namespace OutputSubsystem
             };
         }
 
-        //TODO для латеха нужно операторы переложить и переменные записать иначе
         protected virtual string TokenToString(Token token)
         {
             return token.ToString();

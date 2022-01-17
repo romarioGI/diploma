@@ -34,7 +34,7 @@ namespace ProcessorsSubsystem
                 Sign.NotMore => Sign.NotLess,
                 Sign.NotEqual => Sign.NotEqual,
                 Sign.Any => Sign.Any,
-                _ => throw new NotImplementedException()
+                _ => throw new NotSupportedException()
             };
         }
     }

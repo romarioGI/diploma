@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Common
 {
-    //TODO [NTH] add small tests
     public static class ExtensionMethods
     {
         private static IEnumerable<T> ToIEnumerable<T>(this IEnumerator<T> source)
@@ -13,14 +12,10 @@ namespace Common
                 yield return source.Current;
         }
 
-        public static IEnumerable<T> GetFirst<T>(this IEnumerable<T> source, out T first)
+        public static IEnumerable<T> GetFirstOrDefault<T>(this IEnumerable<T> source, out T first)
         {
             using var enumerator = source.GetEnumerator();
-            if (!enumerator.MoveNext())
-                //TODO
-                throw new Exception();
-
-            first = enumerator.Current;
+            first = enumerator.MoveNext() ? enumerator.Current : default;
             return ToIEnumerable(enumerator);
         }
 

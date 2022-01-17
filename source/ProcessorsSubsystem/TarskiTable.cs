@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ProcessorsSubsystem
 {
-    public class SimpleTarskiTable
+    public class TarskiTable
     {
         private class Column : IEnumerable<Sign>
         {
@@ -80,7 +80,7 @@ namespace ProcessorsSubsystem
         private readonly Column _lastColumn;
         private readonly PolynomialCollection _polynomialCollection;
 
-        public SimpleTarskiTable(IEnumerable<Polynomial> polynomials)
+        public TarskiTable(IEnumerable<Polynomial> polynomials)
         {
             _columns = new LinkedList<Column>();
             _firstColumn = new Column();

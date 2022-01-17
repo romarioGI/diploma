@@ -24,6 +24,7 @@
       <ProjectReference Include="..\InputSubsystem\InputSubsystem.csproj" />
       <ProjectReference Include="..\OutputSubsystem\OutputSubsystem.csproj" />
       <ProjectReference Include="..\ParserSubsystem\ParserSubsystem.csproj" />
+      <ProjectReference Include="..\ProcessorsSubsystem\ProcessorsSubsystem.csproj" />
     </ItemGroup>
 
 </Project>

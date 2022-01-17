@@ -2,8 +2,18 @@ using ParserSubsystem;
 
 namespace ProcessorsSubsystem
 {
-    public interface ISyntaxTreeProcessor: IProcessor<SyntaxTree>
+    public abstract class SyntaxTreeProcessor : IProcessor<SyntaxTree>
     {
-        public SyntaxTree DoOnlyRoot(SyntaxTree syntaxTree);
+        protected abstract SyntaxTree DoInner(SyntaxTree syntaxTree, bool recursively);
+
+        public SyntaxTree Do(SyntaxTree syntaxTree)
+        {
+            return DoInner(syntaxTree, true);
+        }
+
+        public SyntaxTree DoOnlyRoot(SyntaxTree syntaxTree)
+        {
+            return DoInner(syntaxTree, false);
+        }
     }
 }
