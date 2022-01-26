@@ -1,0 +1,53 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[english,russian]{babel}   
+\usepackage[left=30mm, top=20mm, right=20mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{titlesec}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{cmll}
+\usepackage[export]{adjustbox} % для позиционирования рисунков
+\usepackage{wrapfig} % обтекание картинок текстом
+\usepackage{ccaption} % подписи к рисункам
+
+\graphicspath{{pictures/}}
+\DeclareGraphicsExtensions{.png,.jpg}
+
+\newcommand{\sectionbreak}{\clearpage}
+
+\renewcommand{\emptyset}{\varnothing} %символ пустого множества
+%\renewcommand{\bar}[1]{\overline{#1}} %растягивание всевозможных подчеркиваний
+\renewcommand{\qedsymbol}{$\blacktriangleleft$} %символ QED
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Теорема}[section]
+\newtheorem{definition}{Определение}[section]
+\newtheorem{proposal}{Утверждение}[section]
+
+\parindent=1.25cm %отступ абзаца
+
+\begin{document}
+    \input{титульный лист.tex}
+
+    \addtocounter{page}{1}
+
+    \input{оглавление.tex}
+    
+    \input{введение.tex}
+
+    \input{описание алгоритма.tex}
+
+    \input{реализация.tex}
+
+    \input{заключение.tex}
+
+    \input{список литературы.tex}
+    
+    \input{приложения.tex}
+    
+\end{document}
