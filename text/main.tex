@@ -1,20 +1,27 @@
 \documentclass[a4paper,12pt]{article}
 
-\usepackage[english,russian]{babel}   
-\usepackage[left=30mm, top=20mm, right=20mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
+%проверенные (но надо попробовать поудалять зависимости все)
+\usepackage[russian]{babel} 
 \usepackage[utf8]{inputenc}
+\usepackage[left=30mm, top=20mm, right=20mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
+\usepackage{lastpage}
 \usepackage{amssymb}
-\usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{amsthm}
+\usepackage{enumerate}
 \usepackage{titlesec}
 \usepackage{indentfirst}
+\usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{cmll}
 \usepackage[export]{adjustbox} % для позиционирования рисунков
 \usepackage{wrapfig} % обтекание картинок текстом
 \usepackage{ccaption} % подписи к рисункам
 
+
+\parindent=1.25cm %отступ абзаца
+\singlespacing
 \graphicspath{{pictures/}}
 \DeclareGraphicsExtensions{.png,.jpg}
 
@@ -29,14 +36,14 @@
 \newtheorem{definition}{Определение}[section]
 \newtheorem{proposal}{Утверждение}[section]
 
-\parindent=1.25cm %отступ абзаца
 
 \begin{document}
     \input{титульный лист.tex}
 
-
     
-    \addtocounter{page}{1}
+    \setcounter{page}{2}
+
+    \input{реферат.tex}
 
     \input{оглавление.tex}
     
