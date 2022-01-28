@@ -19,10 +19,29 @@
 \usepackage{wrapfig} % обтекание картинок текстом
 \usepackage{ccaption} % подписи к рисункам
 
+\usepackage{color}
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+
+\usepackage{listings}
+\lstset{language=[Sharp]C,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  escapeinside={(*@}{@*)},
+  commentstyle=\color{greencomments},
+  keywordstyle=\color{bluekeywords},
+  stringstyle=\color{redstrings},
+  basicstyle=\ttfamily
+}
+
 
 \parindent=1.25cm %отступ абзаца
 \singlespacing
-\graphicspath{{pictures/}}
+\graphicspath{{pictures}}
 \DeclareGraphicsExtensions{.png,.jpg}
 
 \newcommand{\sectionbreak}{\clearpage}
@@ -40,7 +59,6 @@
 \begin{document}
     \input{титульный лист.tex}
 
-    
     \setcounter{page}{2}
 
     \input{реферат.tex}

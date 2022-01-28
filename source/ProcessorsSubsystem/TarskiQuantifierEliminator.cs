@@ -81,13 +81,12 @@ namespace ProcessorsSubsystem
 
                 return rightOperands.Type == ExpressionType.Identifier
                        && rightOperands.OperandsCount == 0
-                       && rightOperands.Token is IdentifierToken {Type: IdentifierType.Variable};
+                       && rightOperands.Token is IdentifierToken {Type: IdentifierType.Constant};
             }
 
             return true;
         }
 
-        //TODO для полниомов, насыщения системы и таблицы тарского есть тесты в старом коде, скопировать их в этот проект
         private static SyntaxTree TarskiElimination(OperatorToken quantifier, IdentifierToken variable,
             SyntaxTree subFormula)
         {

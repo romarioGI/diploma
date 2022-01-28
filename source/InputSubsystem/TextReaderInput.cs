@@ -19,7 +19,7 @@ namespace InputSubsystem
         public bool MoveNext()
         {
             var symbol = _textReader.Read();
-            if (symbol < 0)
+            if (symbol < 0 || symbol == '\n' || symbol == '\r')
             {
                 IsOver = true;
                 return false;

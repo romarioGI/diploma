@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ParserSubsystem;
+﻿using ParserSubsystem;
 
 namespace OutputSubsystem
 {
