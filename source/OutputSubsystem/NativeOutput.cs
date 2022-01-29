@@ -63,6 +63,8 @@ namespace OutputSubsystem
                 {
                     case NotationType.QuantifierLike:
                     {
+                        minBracketsFreeOperatorPriority =
+                            Math.Min(minBracketsFreeOperatorPriority, priority);
                         result.Append('(');
                         result.Append(TokenToString(operatorToken));
                         result.Append(Print(expression.GetOperand(0), out _));

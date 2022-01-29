@@ -15,17 +15,25 @@ namespace TarskiAlgorithmConsoleApp
 
         private static void Main()
         {
-            //TODO ловить ошибку, выводить сообщение её
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            try
+            {
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
+                Console.Clear();
             
-            Console.WriteLine("Please, enter formula");
+                Console.WriteLine("Please, enter formula");
 
-            var parsedInput = Parser.Parse(Input);
-            Console.WriteLine($"Input formula:\t{Output.Print(parsedInput)}");
+                var parsedInput = Parser.Parse(Input);
+                Console.WriteLine($"Input formula:\t{Output.Print(parsedInput)}");
 
-            var eliminatedFormula = TarskiProcessor.Do(parsedInput);
+                var eliminatedFormula = TarskiProcessor.Do(parsedInput);
 
-            Console.WriteLine($"Result formula:\t{Output.Print(eliminatedFormula)}");
+                Console.WriteLine($"Result formula:\t{Output.Print(eliminatedFormula)}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR: {e.Message}");
+                throw;
+            }
             Console.WriteLine("Press any key to shut down the program");
             Console.ReadKey();
         }
