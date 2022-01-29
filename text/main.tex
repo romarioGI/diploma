@@ -19,6 +19,7 @@
 \usepackage{wrapfig} % обтекание картинок текстом
 \usepackage{ccaption} % подписи к рисункам
 
+
 \usepackage{color}
 \definecolor{bluekeywords}{rgb}{0.13,0.13,1}
 \definecolor{greencomments}{rgb}{0,0.5,0}
@@ -55,6 +56,9 @@
 \newtheorem{definition}{Определение}[section]
 \newtheorem{proposal}{Утверждение}[section]
 
+\usepackage[nounderscore]{syntax}
+\renewcommand{\grammarlabel}[2]{\synt{#1}\hfill#2}
+\setlength{\grammarindent}{12em} % increase separation between LHS/RHS 
 
 \begin{document}
     \input{титульный лист.tex}
